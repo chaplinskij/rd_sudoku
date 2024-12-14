@@ -1,0 +1,6 @@
+.idea/
+env/
+.env/
+logs/
+*.pyc
+out/
