@@ -45,6 +45,20 @@ class ImageService:
         warped = cv2.warpPerspective(image_context.image, matrix, (width, height))
         return warped
 
+    @classmethod
+    def split_into_cells(cls, warped_image):
+        height, width = warped_image.shape[:2]
+        cell_height, cell_width = height // 9, width // 9
+        cells = []
+
+        for row in range(9):
+            for col in range(9):
+                y1, y2 = row * cell_height, (row + 1) * cell_height
+                x1, x2 = col * cell_width, (col + 1) * cell_width
+                cell = warped_image[y1:y2, x1:x2]
+                cells.append(cell)
+
+        return cells
 
 class ImageDrawService:
 

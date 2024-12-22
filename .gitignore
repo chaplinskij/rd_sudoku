@@ -1,6 +1,7 @@
-.idea/
+idea/
 env/
 .env/
 logs/
 *.pyc
 out/
+*out/

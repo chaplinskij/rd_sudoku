@@ -8,6 +8,8 @@ from services.image_service import (
     ImageService,
 )
 from services.context import ImageContext
+from services.recognize import DigitRecognizer
+from services.sudoku import SudokuSolver
 
 
 class BaseProcessor(ABC):
@@ -58,15 +60,18 @@ class ImageProcessor(BaseProcessor):
 
     def queue_worker(self):
         """Метод для обработки кадра в процессе"""
+        digit_recognizer = DigitRecognizer("data/model.h5")
         while True:
             image_context = self.input_queue.get()
             if image_context.image is None or image_context.corners is None:
                 continue
-            # Симуляция длительной обработки
+
             transformed_image = ImageService.perspective_transform(image_context)
+            cells = ImageService.split_into_cells(transformed_image)
+            sudoku_input = digit_recognizer.recognize_digits(cells)
+            sudoku_result = SudokuSolver.solve(sudoku_input)
+            image_context.sudoku_result = sudoku_result
 
-
-            # time.sleep(1)  # Задержка для эмуляции сложной обработки
             image_context.sudoku_result = [1, 2, 0, 0, 0, 0, 5, 8, 7, 4, 0, 0, 5, 0, 6, 0, 0, 8, 4, 0, 0, 9, 0, 0, 0, 4, 0, 0, 2, 8, 9, 1 , 3,
                       6, 0, 0 , 5, 8,2, 0, 0, 0, 0, 5, 8, 7, 4, 0, 0, 5, 0, 6, 0, 0, 8, 4, 0, 0, 9, 0, 8, 4, 0, 0, 3, 0,
                       0, 6, 0, 0, 8, 4, 0, 0, 0, 8, 4, 0, 0, 9, 0]
