@@ -1,8 +1,12 @@
 import cv2, time
+import numpy as np
 from abc import ABC, abstractmethod
 from multiprocessing import Queue, Process
 
-from services.image_service import ImageService
+from services.image_service import (
+    ImageDrawService,
+    ImageService,
+)
 from services.context import ImageContext
 
 
@@ -39,14 +43,13 @@ class ImageProcessor(BaseProcessor):
     def process_frame(self, image_context: ImageContext) -> ImageContext:
         image_context.corners = ImageService.find_rectangle_corners(image_context)
         image_context = self.compute_result(image_context)
-        if image_context.result is not None:
-            image_context = ImageService.draw_context(image_context)
+        image_context = ImageDrawService.draw_context(image_context)
 
         return image_context
 
     def compute_result(self, image_context: ImageContext) -> ImageContext:
         if not self.input_queue.full():
-            self.input_queue.put(image_context.image)
+            self.input_queue.put(image_context)
 
         if not self.output_queue.empty():
             image_context.result = self.output_queue.get()
@@ -55,13 +58,19 @@ class ImageProcessor(BaseProcessor):
 
     def queue_worker(self):
         """Метод для обработки кадра в процессе"""
-        counter = 0
         while True:
-            frame = self.input_queue.get()
-            if frame is None:
-                break
+            image_context = self.input_queue.get()
+            if image_context.image is None or image_context.corners is None:
+                continue
             # Симуляция длительной обработки
+            transformed_image = ImageService.perspective_transform(image_context)
 
-            time.sleep(1)  # Задержка для эмуляции сложной обработки
-            counter += 1
-            self.output_queue.put(counter)
+
+            # time.sleep(1)  # Задержка для эмуляции сложной обработки
+            image_context.sudoku_result = [1, 2, 0, 0, 0, 0, 5, 8, 7, 4, 0, 0, 5, 0, 6, 0, 0, 8, 4, 0, 0, 9, 0, 0, 0, 4, 0, 0, 2, 8, 9, 1 , 3,
+                      6, 0, 0 , 5, 8,2, 0, 0, 0, 0, 5, 8, 7, 4, 0, 0, 5, 0, 6, 0, 0, 8, 4, 0, 0, 9, 0, 8, 4, 0, 0, 3, 0,
+                      0, 6, 0, 0, 8, 4, 0, 0, 0, 8, 4, 0, 0, 9, 0]
+
+            result_image = np.zeros(transformed_image.shape, dtype=np.uint8)
+            result_image = ImageDrawService.draw_digits(result_image, image_context)
+            self.output_queue.put(result_image)
