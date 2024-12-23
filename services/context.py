@@ -25,7 +25,7 @@ class ImageContext:
             text_height += margin + thickness // 2
             text_image = np.zeros((text_height, text_width, 3), dtype=np.uint8)
             cv2.putText(text_image, text, (margin, text_height - margin // 2 - thickness // 2), font, font_scale,
-                        (0, 255, 255), thickness, cv2.LINE_AA)
+                        (255, 0, 0), thickness, cv2.LINE_AA)
 
             result[digit] = {'image': text_image, 'shape': (text_height, text_width)}
         return result

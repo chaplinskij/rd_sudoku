@@ -17,8 +17,8 @@ class FileGenerator:
             for i in range(num_samples):
                 font_path = random.choice(fonts)
                 font = ImageFont.truetype(font_path, size=24)
-
-                img = Image.new('L', image_size, color=255)
+                bg_color = random.randint(160, 255)
+                img = Image.new('L', image_size, color=bg_color)
                 draw = ImageDraw.Draw(img)
 
                 text = str(digit) if digit else ''
@@ -41,7 +41,7 @@ class FileGenerator:
                 if is_affine:
                     affine_x = random.choice([-0.2, -0.15, -0.1, 0, 0.1, 0.15, 0.2, ])
                     affine_y = random.choice([-0.2, -0.15, -0.1, 0, 0.1, 0.15, 0.2, ])
-                    img = img.transform(img.size, Image.AFFINE, (1, affine_x, 0, affine_y, 1, 0), fillcolor=255)
+                    img = img.transform(img.size, Image.AFFINE, (1, affine_x, 0, affine_y, 1, 0), fillcolor=bg_color)
 
                 # добавляем границу
                 is_offset = random.choice([True, False])

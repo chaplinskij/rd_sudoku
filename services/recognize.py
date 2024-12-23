@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import cv2
-
+from matplotlib import pyplot as plt
 
 class DigitRecognizer:
     def __init__(self, model_path):
@@ -14,7 +14,7 @@ class DigitRecognizer:
         results = []
         for img in images:
             processed_img = self.preprocess_image(img)
-            prediction = self.model.predict(processed_img)
+            prediction = self.model.predict(processed_img, verbose=0)
             digit = self.postprocess_prediction(prediction)
             results.append(digit)
         return results

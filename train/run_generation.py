@@ -4,7 +4,7 @@ from train.services import FileGenerator
 
 if __name__ == '__main__':
     output_dir = 'out'
-    num_samples = 1000
+    num_samples = 2000
     image_size = (28, 28)
     fonts = []
     for dir in ["/usr/share/fonts/truetype/ubuntu/", "/usr/share/fonts/truetype/freefont/"]:
